@@ -46,3 +46,11 @@ p {
 .message-ctn {
     margin-left: 10px;
 }
+
+.words-ctn div {
+    display: inline-block;
+}
+
+.foundWords{
+    margin-right: 10px;
+}

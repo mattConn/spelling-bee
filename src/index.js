@@ -1,14 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import Controls from './controls';
 import './index.css';
 
-class Letter extends React.Component {
+
+class Message extends React.Component {
   render() {
     return (
-      <button className="letter" onClick={this.props.onClick}>
-        {this.props.value}
-      </button>
-    );
+      <div className="message">
+        <p>{this.props.message}</p>
+      </div>
+    )
   }
 }
 
@@ -16,18 +18,11 @@ class App extends React.Component {
   constructor(props) {
     super(props);
 
-    this.letters = this.props.letters;
-
     this.state = {
       currentWord: '',
-      wordList: this.props.wordList
+      wordList: this.props.wordList,
+      message: ''
     }
-
-
-    // list of all letters as components
-    this.letterComponents = this.letters.map(
-      (letter, index) => this.renderLetter(letter, index)
-    );
 
     // list of all found words
     this.foundWords = Object.keys(this.state.wordList).filter(key => this.state.wordList[key]);
@@ -41,61 +36,60 @@ class App extends React.Component {
   }
 
   // check entered word for correctness
-  enterHandler(){
+  enterHandler() {
     // clear old word
-    this.setState({currentWord: ''});
+    this.setState({ currentWord: '' });
 
     // success conditions
-    const conditions = [
-      this.state.currentWord.length > 3, // long enough
-      this.state.wordList.hasOwnProperty(this.state.currentWord), // in list
-      !this.state.wordList[this.state.currentWord] // not already found
-    ];
-
-    // bitwise AND all conditions (all must be true)
-    if(!conditions.reduce((ax, val)=>ax & val)) return;
+    // USE OBJ
+    if (this.state.currentWord.length < 4) // not long enough
+    {
+      this.setState({ message: 'Too short.' });
+      return;
+    }
+    if (!this.state.wordList.hasOwnProperty(this.state.currentWord)) // not in list
+    {
+      this.setState({ message: 'Not in list.' });
+      return;
+    }
+    if (this.state.wordList[this.state.currentWord]) // already found
+    {
+      this.setState({ message: 'Aready found.' });
+      return;
+    }
 
     // mark word as found
-      let wordList = this.state.wordList;
-      wordList[this.state.currentWord] = true;
-      this.setState({ wordList: wordList });
+    let wordList = this.state.wordList;
+    wordList[this.state.currentWord] = true;
+    this.setState({ wordList: wordList });
   }
 
-
-  // return letter component
-  renderLetter(letter, key) {
-    return <Letter key={key} value={letter} onClick={() => this.letterClickHandler(letter)} />
-  }
 
   render() {
     return (
       <div className="game">
 
-          <div className="currentWord-ctn">
-            {this.state.currentWord.length === 0 ? <p>&nbsp;</p> : <p>{this.state.currentWord}</p>}
-          </div>
-
-        <div className="controls">
-
-          {/*letters*/}
-          {this.letterComponents}
-
-          <div className="buttons">
-            <button className="enter" onClick={() => this.enterHandler()}>Enter</button>
-          </div>
-
-        </div>{/*end controls*/}
-
-        <div className="foundWords">
-          {/* show how many words found */}
-          <p>{Object.keys(this.state.wordList).filter(key => this.state.wordList[key]).length}/{Object.keys(this.state.wordList).length}</p>
-
-          {/* show all words found */}
-          {
-            Object.keys(this.state.wordList).filter(
-              key => this.state.wordList[key]).map(word => <p>{word}</p>)
-          }
+        <div className="currentWord-ctn">
+          {this.state.currentWord.length === 0 ? <p>&nbsp;</p> : <p>{this.state.currentWord}</p>}
         </div>
+
+        <Controls letters={this.props.letters} enterHandler={()=>this.enterHandler()}/>
+
+
+        <div className="words-ctn">
+          <div className="foundWords">
+            {/* show how many words found */}
+            <p>{Object.keys(this.state.wordList).filter(key => this.state.wordList[key]).length}/{Object.keys(this.state.wordList).length}</p>
+
+            {/* show all words found */}
+            {
+              Object.keys(this.state.wordList).filter(
+                key => this.state.wordList[key]).map(word => <p>{word}</p>)
+            }
+          </div>
+
+          <Message message={this.state.message} />
+        </div>{/* end words ctn */}
 
       </div>
     );
@@ -119,7 +113,7 @@ const words = [
   'ploy',
 ];
 const wordList = {};
-words.forEach(word=>wordList[word]=false);
+words.forEach(word => wordList[word] = false);
 
 ReactDOM.render(
   <App
