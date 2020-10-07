@@ -20,7 +20,6 @@ class App extends React.Component {
 
     this.state = {
       currentWord: '',
-      message: '',
       wordList: this.props.wordList
     }
 
@@ -30,7 +29,9 @@ class App extends React.Component {
       (letter, index) => this.renderLetter(letter, index)
     );
 
+    // list of all found words
     this.foundWords = Object.keys(this.state.wordList).filter(key => this.state.wordList[key]);
+    // list of all found words as components
     this.foundWordsComponents = this.foundWords.map(word => <p>{word}</p>);
   }
 
@@ -39,43 +40,29 @@ class App extends React.Component {
     this.setState({ currentWord: this.state.currentWord + letter });
   }
 
-  // check entered word on enter
-  enterHandler() {
-    let message = '';
+  // check entered word for correctness
+  enterHandler(){
+    // clear old word
+    this.setState({currentWord: ''});
 
-    // check if word is long enough
-    if (this.state.currentWord.length < 4)
-      message = 'Too short.';
-    // word not in list
-    else if (!this.state.wordList.hasOwnProperty(this.state.currentWord))
-      message = 'Not in list.';
-    // word already found
-    else if (this.state.wordList[this.state.currentWord])
-      message = 'Already found.';
-    // valid word found 
-    else {
+    // success conditions
+    const conditions = [
+      this.state.currentWord.length > 3, // long enough
+      this.state.wordList.hasOwnProperty(this.state.currentWord), // in list
+      !this.state.wordList[this.state.currentWord] // not already found
+    ];
+
+    // bitwise AND all conditions (all must be true)
+    if(!conditions.reduce((ax, val)=>ax & val)) return;
+
+    // mark word as found
       let wordList = this.state.wordList;
       wordList[this.state.currentWord] = true;
       this.setState({ wordList: wordList });
-      message = 'Word found.';
-    }
-    // clear old word
-    this.setState({ currentWord: '' }, () => this.displayMessage(message));
-  }
-
-  displayMessage(message) {
-    this.setState({ message: message });
-    setTimeout(
-      () => this.setState({ message: '' }), 1500
-    );
   }
 
 
-  deleteHandler() {
-    // remove last letter from current word
-    this.setState({ currentWord: this.state.currentWord.slice(0, -1) });
-  }
-
+  // return letter component
   renderLetter(letter, key) {
     return <Letter key={key} value={letter} onClick={() => this.letterClickHandler(letter)} />
   }
@@ -94,17 +81,16 @@ class App extends React.Component {
           {this.letterComponents}
 
           <div className="buttons">
-            {/* <button className="delete" onClick={() => this.deleteHandler()}>Del</button> */}
             <button className="enter" onClick={() => this.enterHandler()}>Enter</button>
           </div>
 
-          <div className="message-ctn">
-            {this.state.message.length === 0 ? <p>&nbsp;</p> : <p>{this.state.message}</p>}
-          </div>
         </div>{/*end controls*/}
 
         <div className="foundWords">
+          {/* show how many words found */}
           <p>{Object.keys(this.state.wordList).filter(key => this.state.wordList[key]).length}/{Object.keys(this.state.wordList).length}</p>
+
+          {/* show all words found */}
           {
             Object.keys(this.state.wordList).filter(
               key => this.state.wordList[key]).map(word => <p>{word}</p>)
@@ -127,7 +113,10 @@ const words = [
   'olay',
   'opal',
   'pallor',
-  'rally'
+  'rally',
+  'play',
+  'polar',
+  'ploy',
 ];
 const wordList = {};
 words.forEach(word=>wordList[word]=false);
