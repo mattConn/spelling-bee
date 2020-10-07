@@ -5,6 +5,12 @@
     line-height: 34px;
     font-family: sans-serif;
 }
+.game {
+    width: 50%;
+    margin: 0 auto;
+    max-width: 600px;
+}
+
 button{
     background: #fff;
     border: 1px solid #999;

@@ -48,10 +48,10 @@ class App extends React.Component {
       message = 'Too short.';
     // word not in list
     else if (!this.state.wordList.hasOwnProperty(this.state.currentWord))
-      message = `${this.state.currentWord} not in list.`;
+      message = 'Not in list.';
     // word already found
     else if (this.state.wordList[this.state.currentWord])
-      message = `${this.state.currentWord} already found.`;
+      message = 'Already found.';
     // valid word found 
     else {
       let wordList = this.state.wordList;
@@ -94,7 +94,7 @@ class App extends React.Component {
           {this.letterComponents}
 
           <div className="buttons">
-            <button className="delete" onClick={() => this.deleteHandler()}>Del</button>
+            {/* <button className="delete" onClick={() => this.deleteHandler()}>Del</button> */}
             <button className="enter" onClick={() => this.enterHandler()}>Enter</button>
           </div>
 
@@ -117,11 +117,20 @@ class App extends React.Component {
 }
 
 
-const letters = ['r', 'i', 'o', 'y', 'f', 'l', 'g'];
-const wordList = {
-  foggy: false,
-  groggy: false
-}
+const letters = [...'alyorp'];
+const words = [
+  'royal',
+  'allay',
+  'alloy',
+  'ally',
+  'yall',
+  'olay',
+  'opal',
+  'pallor',
+  'rally'
+];
+const wordList = {};
+words.forEach(word=>wordList[word]=false);
 
 ReactDOM.render(
   <App
