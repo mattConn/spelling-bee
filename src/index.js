@@ -17,7 +17,6 @@ class App extends React.Component {
     super(props);
 
     this.letters = this.props.letters;
-    this.centerLetter = this.props.centerLetter;
 
     this.state = {
       currentWord: '',
@@ -30,6 +29,9 @@ class App extends React.Component {
     this.letterComponents = this.letters.map(
       (letter, index) => this.renderLetter(letter, index)
     );
+
+    this.foundWords = Object.keys(this.state.wordList).filter(key => this.state.wordList[key]);
+    this.foundWordsComponents = this.foundWords.map(word => <p>{word}</p>);
   }
 
   // update currentWord state
@@ -42,31 +44,23 @@ class App extends React.Component {
     let message = '';
 
     // check if word is long enough
-    if(this.state.currentWord.length < 4)
-      message = 'Word is too short.';
-    // check for center letter
-    else if (this.state.currentWord.indexOf(this.centerLetter) < 0)
-      message = `Word must contain ${this.centerLetter}.`;
-     // word not in list
+    if (this.state.currentWord.length < 4)
+      message = 'Too short.';
+    // word not in list
     else if (!this.state.wordList.hasOwnProperty(this.state.currentWord))
-      message = `${this.state.currentWord} not in word list.`;
-     // word already found
+      message = `${this.state.currentWord} not in list.`;
+    // word already found
     else if (this.state.wordList[this.state.currentWord])
       message = `${this.state.currentWord} already found.`;
     // valid word found 
-    else 
-    {
+    else {
       let wordList = this.state.wordList;
       wordList[this.state.currentWord] = true;
-      this.setState({wordList: wordList});
-      message = 'Word found!';
+      this.setState({ wordList: wordList });
+      message = 'Word found.';
     }
-
-
     // clear old word
     this.setState({ currentWord: '' }, () => this.displayMessage(message));
-
-    console.log(this.state.wordList);
   }
 
   displayMessage(message) {
@@ -89,21 +83,32 @@ class App extends React.Component {
   render() {
     return (
       <div className="game">
-        <div className="currentWord-ctn">
-          {this.state.currentWord.length === 0 ? <p>&nbsp;</p> : <p>{this.state.currentWord}</p>}
-        </div>
 
-        {/*letters*/}
-        {this.letterComponents}
-        {this.renderLetter(this.centerLetter, 'center')}
+          <div className="currentWord-ctn">
+            {this.state.currentWord.length === 0 ? <p>&nbsp;</p> : <p>{this.state.currentWord}</p>}
+          </div>
 
-        <div className="buttons">
-          <button className="delete" onClick={() => this.deleteHandler()}>Del</button>
-          <button className="enter" onClick={() => this.enterHandler()}>Enter</button>
-        </div>
+        <div className="controls">
 
-        <div className="message-ctn">
-         {this.state.message.length === 0 ? <p>&nbsp;</p> : <p>{this.state.message}</p>}
+          {/*letters*/}
+          {this.letterComponents}
+
+          <div className="buttons">
+            <button className="delete" onClick={() => this.deleteHandler()}>Del</button>
+            <button className="enter" onClick={() => this.enterHandler()}>Enter</button>
+          </div>
+
+          <div className="message-ctn">
+            {this.state.message.length === 0 ? <p>&nbsp;</p> : <p>{this.state.message}</p>}
+          </div>
+        </div>{/*end controls*/}
+
+        <div className="foundWords">
+          <p>{Object.keys(this.state.wordList).filter(key => this.state.wordList[key]).length}/{Object.keys(this.state.wordList).length}</p>
+          {
+            Object.keys(this.state.wordList).filter(
+              key => this.state.wordList[key]).map(word => <p>{word}</p>)
+          }
         </div>
 
       </div>
@@ -112,18 +117,16 @@ class App extends React.Component {
 }
 
 
-const letters = ['r', 'i', 'o', 'y', 'f', 'l'];
-const centerLetter = 'g';
+const letters = ['r', 'i', 'o', 'y', 'f', 'l', 'g'];
 const wordList = {
   foggy: false,
   groggy: false
 }
 
 ReactDOM.render(
-  <App 
-  letters={letters} 
-  centerLetter={centerLetter} 
-  wordList={wordList}
+  <App
+    letters={letters}
+    wordList={wordList}
   />,
   document.getElementById('root')
 );

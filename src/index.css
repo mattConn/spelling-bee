@@ -6,7 +6,6 @@
     font-family: sans-serif;
 }
 button{
-    float: left;
     background: #fff;
     border: 1px solid #999;
     font-size: 24px;
@@ -20,10 +19,24 @@ button{
     margin-left: -1px;
     margin-bottom: -1px;
 }
+.controls div {
+    display: inline-block;
+}
 
 button.delete {
     width: initial;
 }
 button.enter {
     width: initial;
+}
+
+p {
+    margin: 0;
+}
+
+.foundWords p {
+    margin: 0;
+}
+.message-ctn {
+    margin-left: 10px;
 }
