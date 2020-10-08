@@ -1,18 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Controls from './controls';
+import Letter from './letter';
 import './index.css';
-
-
-class Message extends React.Component {
-  render() {
-    return (
-      <div className="message">
-        <p>{this.props.message}</p>
-      </div>
-    )
-  }
-}
 
 class App extends React.Component {
   constructor(props) {
@@ -24,6 +13,10 @@ class App extends React.Component {
       message: ''
     }
 
+    this.letterComponents = this.props.letters.map(
+      (letter, index) => <Letter value={letter} key={index} onClick={() => this.letterHandler(letter)} />
+    );
+
     // list of all found words
     this.foundWords = Object.keys(this.state.wordList).filter(key => this.state.wordList[key]);
     // list of all found words as components
@@ -31,7 +24,7 @@ class App extends React.Component {
   }
 
   // update currentWord state
-  letterClickHandler(letter) {
+  letterHandler(letter) {
     this.setState({ currentWord: this.state.currentWord + letter });
   }
 
@@ -42,20 +35,23 @@ class App extends React.Component {
 
     // success conditions
     // USE OBJ
-    if (this.state.currentWord.length < 4) // not long enough
-    {
-      this.setState({ message: 'Too short.' });
-      return;
-    }
-    if (!this.state.wordList.hasOwnProperty(this.state.currentWord)) // not in list
-    {
-      this.setState({ message: 'Not in list.' });
-      return;
-    }
-    if (this.state.wordList[this.state.currentWord]) // already found
-    {
-      this.setState({ message: 'Aready found.' });
-      return;
+    const successConditions = {
+      'Too short.': this.state.currentWord.length < 4,
+      'Not in list.': !this.state.wordList.hasOwnProperty(this.state.currentWord),
+      'Aready found.': this.state.wordList[this.state.currentWord]
+    };
+
+    for (const message in successConditions) {
+      if (successConditions[message]) {
+
+        this.setState({ message: message });
+
+        // clear message
+        setTimeout(
+          ()=>this.setState({ message: '' }),
+          1500);
+        return;
+      }
     }
 
     // mark word as found
@@ -73,7 +69,11 @@ class App extends React.Component {
           {this.state.currentWord.length === 0 ? <p>&nbsp;</p> : <p>{this.state.currentWord}</p>}
         </div>
 
-        <Controls letters={this.props.letters} enterHandler={()=>this.enterHandler()}/>
+        {/* letters and enter button */}
+        <div className="controls">
+          {this.letterComponents}
+          <button className="enter" onClick={() => this.enterHandler()}>Enter</button>
+        </div>
 
 
         <div className="words-ctn">
@@ -88,7 +88,10 @@ class App extends React.Component {
             }
           </div>
 
-          <Message message={this.state.message} />
+
+          <div className="message">
+            <p>{this.state.message}</p>
+          </div>
         </div>{/* end words ctn */}
 
       </div>

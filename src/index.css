@@ -53,4 +53,8 @@ p {
 
 .foundWords{
     margin-right: 10px;
+    float: left;
 }
+ .message {
+     float: left;
+ }
