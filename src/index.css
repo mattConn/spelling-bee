@@ -6,10 +6,15 @@
     font-family: sans-serif;
 }
 .game {
-    width: 50%;
+    width: 80%;
     margin: 0 auto;
     max-width: 600px;
 }
+@media only screen and (min-width: 600px) {
+    .game {
+        width: 50%;
+    }
+  }
 
 button{
     background: #fff;
