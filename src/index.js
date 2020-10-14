@@ -1,16 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Letter from './letter';
-import './index.css';
+import './index.scss';
 
 class App extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      currentWord: '',
+      currentWord: 'spelling bee',
       wordList: this.props.wordList,
-      message: ''
+      displayingMessage: false
     }
 
     this.letterComponents = this.props.letters.map(
@@ -25,11 +25,29 @@ class App extends React.Component {
 
   // update currentWord state
   letterHandler(letter) {
-    this.setState({ currentWord: this.state.currentWord + letter });
+    if(this.state.displayingMessage)
+    {
+      this.setState({
+        currentWord: letter,
+        displayingMessage: false
+      });
+      return;
+    }
+
+    // max word length
+    if (this.state.currentWord.length >= 18) {
+      this.setState({ currentWord: '' });
+      this.displayMessage('Too long.');
+      return;
+    }
+    this.setState({ currentWord: 
+      this.state.currentWord === 'spelling bee' ? letter : this.state.currentWord+ letter 
+    });
   }
 
   // check entered word for correctness
   enterHandler() {
+    if (this.state.currentWord.length === 0) return;
     // clear old word
     this.setState({ currentWord: '' });
 
@@ -43,13 +61,7 @@ class App extends React.Component {
 
     for (const message in successConditions) {
       if (successConditions[message]) {
-
-        this.setState({ message: message });
-
-        // clear message
-        setTimeout(
-          ()=>this.setState({ message: '' }),
-          1500);
+        this.displayMessage(message);
         return;
       }
     }
@@ -60,26 +72,49 @@ class App extends React.Component {
     this.setState({ wordList: wordList });
   }
 
+  deleteHandler() {
+    if(this.state.currentWord.length === 0) return;
+    this.setState({ currentWord: this.state.currentWord.slice(0, -1) });
+  }
+
+  displayMessage(message) {
+    this.setState({ 
+      currentWord: message,
+      displayingMessage: true 
+    });
+
+    // clear message
+    setTimeout(
+      () => this.setState({ 
+        currentWord: this.state.displayingMessage ? '' : this.state.currentWord,
+        displayingMessage: false
+      }),
+      1500);
+  }
 
   render() {
     return (
-      <div className="game">
+      <div className="wrapper">
 
-        <div className="currentWord-ctn">
+        <div className="currentWord">
           {this.state.currentWord.length === 0 ? <p>&nbsp;</p> : <p>{this.state.currentWord}</p>}
         </div>
 
         {/* letters and enter button */}
         <div className="controls">
           {this.letterComponents}
+          <button className="delete" onClick={() => this.deleteHandler()}>Del</button>
           <button className="enter" onClick={() => this.enterHandler()}>Enter</button>
         </div>
 
 
-        <div className="words-ctn">
+        <div className="status">
           <div className="foundWords">
             {/* show how many words found */}
-            <p>{Object.keys(this.state.wordList).filter(key => this.state.wordList[key]).length}/{Object.keys(this.state.wordList).length}</p>
+            <p className="count">
+              {Object.keys(this.state.wordList).filter(key => 
+                this.state.wordList[key]).length}/{Object.keys(this.state.wordList).length}
+                </p>
 
             {/* show all words found */}
             {
@@ -88,10 +123,6 @@ class App extends React.Component {
             }
           </div>
 
-
-          <div className="message">
-            <p>{this.state.message}</p>
-          </div>
         </div>{/* end words ctn */}
 
       </div>

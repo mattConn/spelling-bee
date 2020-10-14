@@ -1,0 +1,65 @@
+$main-color: black;
+$border-style: solid 1px $main-color;
+
+@mixin font-style {
+    @media screen and (min-width: 600px){
+        font-size: 64px;
+    }
+    font-size: 32px;
+    font-family: sans-serif;
+    font-weight: 700;
+    color: $main-color;
+}
+
+p {
+    margin: 0;
+}
+
+div {
+    margin-bottom: 20px;
+}
+
+.wrapper {
+    margin: 30px auto;
+    width: 80%;
+    @include font-style();
+    touch-action: manipulation;
+}
+
+.currentWord {
+    border-bottom: $border-style;
+    p {
+        margin: 0;
+    }
+}
+
+.controls {
+    button {
+        font-family: sans-serif;
+        font-weight: 700;
+        background-color: white;
+        margin-right: -3px;
+        margin-bottom: -3px;
+        border: $border-style;
+        cursor: pointer;
+        padding: 10px;
+
+        @media screen and (min-width: 600px){
+            padding: 20px;
+        }
+        @include font-style();
+    }
+}
+.status {
+    // margin-right: 20px;
+    // float: left;
+    .foundWords {
+        .count {
+            opacity: 0.6;
+        }
+        float: left;
+    }
+    .message {
+        float: right;
+    }
+}
